@@ -1,0 +1,2 @@
+theseus-ai==0.1.3
+natten==0.14.6+torch200cu118
