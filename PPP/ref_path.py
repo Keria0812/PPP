@@ -79,7 +79,7 @@ class Ref_path:
         # Get candidate paths
         edges = self.identify_candidate_edges(starting_block, vehicle_state)
         candidate_paths = self.find_candidate_paths(edges)
-        #print(candidate_paths)
+        
         if candidate_paths is None:
             return None
 
@@ -88,7 +88,7 @@ class Ref_path:
                         TrackedObjectType.CZONE_SIGN, TrackedObjectType.TRAFFIC_CONE,
                         TrackedObjectType.GENERIC_OBJECT]
         objects = observation.tracked_objects.get_tracked_objects_of_types(object_types)
-        #print(objects)
+        
 
         obstacles = []
         vehicles = []
@@ -106,7 +106,7 @@ class Ref_path:
 
         # Generate paths using state lattice
         paths = self.create_paths(vehicle_state, candidate_paths)
-        #print(paths)
+        
 
         # Avoid lane changes in large intersections
         if len(traffic_data) > 0:
@@ -126,7 +126,7 @@ class Ref_path:
                     min_cost = cost
                     optimal_path = path[0]
             refined_path = self.refine_path(optimal_path, vehicle_state)
-            #print(refined_path.shape)
+            
 
             if refined_path is None:
                 continue

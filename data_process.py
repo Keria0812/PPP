@@ -14,9 +14,7 @@ from nuplan.planning.scenario_builder.scenario_filter import ScenarioFilter
 from nuplan.planning.scenario_builder.nuplan_db.nuplan_scenario_builder import NuPlanScenarioBuilder
 from nuplan.planning.scenario_builder.nuplan_db.nuplan_scenario_utils import ScenarioMapping
 
-#python data_process1.py  --data_path  /home/xining095/nuplan/dataset/nuplan-v1.1/splits/val --map_path /home/xining095/nuplan/dataset/maps/  --save_path /home/xining095/nuplan/nuplan-devkit-gameformer-xn/GameFormer-Planner-main/GameFormer-Planner-kaiyuan/11/
 
-# define data processor
 class TrajectoryDataProcessor(object):
     def __init__(self, scenarios):
         self.scenarios = scenarios
@@ -196,7 +194,6 @@ class TrajectoryDataProcessor(object):
 
         sampled_future_observations = [present_tracked_objects] + future_tracked_objects
         future_tracked_objects_tensor_list, _ = tensorize_tracked_objects(sampled_future_observations)
-        #print(future_tracked_objects_tensor_list.shape)
         agent_futures = process_future_agent_data(current_ego_state, future_tracked_objects_tensor_list, self.max_agents, agent_index)
 
         return agent_futures

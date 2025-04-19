@@ -98,7 +98,7 @@ class ConvTokenizer(nn.Module):
             self.norm = None
 
     def forward(self, x):
-        x = self.proj(x).permute(0, 2, 1)  # B, C, L -> B, L, C
+        x = self.proj(x).permute(0, 2, 1)  
         if self.norm is not None:
             x = self.norm(x)
         return x

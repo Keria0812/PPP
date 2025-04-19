@@ -452,10 +452,7 @@ def wrap_angle_to_pi(theta):
     return (theta + np.pi) % (2 * np.pi) - np.pi
 
 def create_ego_raster(vehicle_state):
-    # Extract ego vehicle dimensions
-    """
-    create_ego_raster 函数的作用是在一个可视化图表中绘制自车（ego vehicle）的矩形表示。这个矩形代表了自车的位置、朝向和尺寸。
-    """
+
     vehicle_parameters = get_pacifica_parameters()
     ego_width = vehicle_parameters.width
     ego_front_length = vehicle_parameters.front_length
@@ -503,16 +500,7 @@ def create_map_raster(lanes, crosswalks, route_lanes,ref_paths):
         ref_path = ref_paths[k]
 
         plt.plot(ref_path[:, 0], ref_path[:, 1], 'y', linewidth=4) # plot route_lanes
-'''
-def create_map_raster(ref_paths):
 
-
-    for k in range(ref_paths.shape[0]):
-        ref_path = ref_paths[k]
-        #print(ref_path[:, 0])
-
-        plt.plot(ref_path[:, 0], ref_path[:, 1], 'b', linewidth=4) # plot route_lanes
-'''
 def draw_trajectory(ego_trajectory, agent_trajectories):
     # plot ego 
     plt.plot(ego_trajectory[:, 0], ego_trajectory[:, 1], 'r', linewidth=3, zorder=3)

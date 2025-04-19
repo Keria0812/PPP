@@ -103,7 +103,6 @@ class RefinementPlanner:
         self.objective = self.build_cost_function(objective, control_variables, ego_state, ego_pred_plan, 
                                                   speed_limit, occupancy, weights)
         self.optimizer = th.GaussNewton(objective, th.CholeskyDenseSolver, 
-                                        #max_iterations=20, 
                                         max_iterations=50, 
                                         step_size=0.3,
                                         rel_err_tolerance=1e-3)
@@ -158,9 +157,8 @@ class RefinementPlanner:
         grid = torch.arange(0, MAX_LEN).to(occupancy.device)
         mask = grid > s[:, :, None]
         occupancy = occupancy * mask
-        occupancy = occupancy[:, :30].to(torch.float32)#修改为20
-        #print(occupancy.shape)
-        # set speed limit
+        occupancy = occupancy[:, :30].to(torch.float32)
+
         speed_limit = ref_path[:, :, 4].to(torch.float32)
 
         # update planner inputs

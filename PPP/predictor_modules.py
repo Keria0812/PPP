@@ -62,7 +62,7 @@ class AgentEncoder(nn.Module):
 
     def forward(self, inputs):
 
-        #print(f"agent_feature: {agent_feature.size()}")#agent_feature: torch.Size([24, 50, 20, 9])
+        
         agent_feature = inputs
         valid_mask = ~((agent_feature[..., 0] == 0) & (agent_feature[..., 1] == 0) & (agent_feature[..., 2] == 0))
         bs, A, T, _ = agent_feature.shape
@@ -70,7 +70,7 @@ class AgentEncoder(nn.Module):
         valid_agent_mask = valid_mask.any(-1).flatten()
 
         
-        #print(f"agent_feature: {agent_feature.size()}")#([1200, 20, 9])
+        
         if not valid_agent_mask.any():
             logging.info(f"no_neighbor")
             return torch.zeros(bs, A, self.dim, device=agent_feature.device)
@@ -78,18 +78,10 @@ class AgentEncoder(nn.Module):
         x_agent_tmp = self.history_encoder(
             agent_feature[valid_agent_mask].permute(0, 2, 1).contiguous()
         )
-        #print(x_agent_tmp.size())
         x_agent = torch.zeros(bs * A, self.dim, device=agent_feature.device)
         x_agent[valid_agent_mask] = x_agent_tmp
         x_agent = x_agent.view(bs, A, self.dim)
-        #print(x_agent.size())#torch.Size([4, 20, 128])
-        '''
-        if not self.use_ego_history:
-            ego_feature = data["current_state"][:, : self.state_channel]
-            x_ego = self.ego_state_emb(ego_feature)
-            x_agent[:, 0] = x_ego
-        '''
-  
+
 
         return x_agent 
 

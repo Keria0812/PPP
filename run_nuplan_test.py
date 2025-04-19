@@ -211,8 +211,6 @@ def main(args):
     scenario_filter = ScenarioFilter(*get_filter_parameters(args.scenarios_per_type, args.total_scenarios, args.shuffle_scenarios))
     worker = SingleMachineParallelExecutor(use_process_pool=True)
     scenarios = builder.get_scenarios(scenario_filter, worker)
-    #for scenario in scenarios:
-    #    print(scenario.token)
     del worker, scenario_filter, scenario_mapping
 
     # begin testing

@@ -181,7 +181,7 @@ def safety(optim_vars, aux_vars):
     l_right_current = torch.clamp((l_right * 10).long() + 100, 0, 199)
     s_current = torch.clamp(s_front.long(), 0, 1199)
 
-    l_range = torch.arange(0, 200, device=occupancy.device).unsqueeze(0)  # 形状 [1, 200]
+    l_range = torch.arange(0, 200, device=occupancy.device).unsqueeze(0)  
 
 
     for i in range(500): 
@@ -205,7 +205,7 @@ def safety(optim_vars, aux_vars):
 class RefinementPlanner_sl_noobs:
     def __init__(self, device):
         self._device = device
-        self.N = int(T/DT) # trajectory points (ds/dt)
+        self.N = int(T/DT) 
         self.gains = {
             "speed": 1.0,
             "accel": 10.0,
@@ -220,9 +220,8 @@ class RefinementPlanner_sl_noobs:
         control_variables = th.Vector(dof=2400, name="sl")
         weights = {k: th.ScaleCostWeight(th.Variable(torch.tensor(v), name=f'gain_{k}')) for k, v in self.gains.items()}
         ego_state = th.Variable(torch.empty(1, 7), name="ego_state")
-        ref_line_info = th.Variable(torch.empty(1, MAX_LEN*10, 3), name="ref_line_info")#修改为20
-        #speed_limit = th.Variable(torch.empty(1, MAX_LEN*10), name="speed_limit")
-        #occ_map_obstacles = th.Variable(torch.empty(1, MAX_LEN*10,200), name="occupancy")
+        ref_line_info = th.Variable(torch.empty(1, MAX_LEN*10, 3), name="ref_line_info")
+
         left_bound = th.Variable(torch.empty(1, MAX_LEN*10), name = "left_bound")
         right_bound = th.Variable(torch.empty(1, MAX_LEN*10), name = "right_bound")
         yaw = th.Variable(torch.empty(1, MAX_LEN*10), name = "yaw")
@@ -230,8 +229,7 @@ class RefinementPlanner_sl_noobs:
         objective = th.Objective()
         self.objective = self.build_cost_function(objective, control_variables, ego_state, ref_line_info, 
                                                     left_bound, right_bound, yaw, weights)
-        self.optimizer = th.GaussNewton(objective, th.CholeskyDenseSolver, 
-                                        #max_iterations=20, 
+        self.optimizer = th.GaussNewton(objective, th.CholeskyDenseSolver,  
                                         max_iterations=50, 
                                         step_size=0.3,
                                         rel_err_tolerance=1e-3)

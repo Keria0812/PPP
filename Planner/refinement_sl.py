@@ -215,7 +215,7 @@ class RefinementPlanner_sl:
         objective.add(safety_cost)
 
 
-        end_cost = th.AutoDiffCostFunction([control_variables], end_condition, 1, weights['end'],#10
+        end_cost = th.AutoDiffCostFunction([control_variables], end_condition, 1, weights['end'],
                                            aux_vars=[ref_line_info], autograd_vectorize=vectorize, name="end_condition")
         objective.add(end_cost)
 

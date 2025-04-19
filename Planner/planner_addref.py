@@ -80,7 +80,6 @@ class Planner(AbstractPlanner):
 
         # Get reference path
         ref_path = get_reference_path(ego_state, traffic_light_data, observation, self._map_api, self._route_roadblock_ids)
-        #print(ref_path.shape)#(2, 1200, 6)
 
         # Infer prediction model
         with torch.no_grad():

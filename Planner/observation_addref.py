@@ -33,7 +33,7 @@ def observation_adapter_addref(history_buffer, ego_state, observation, traffic_l
 
 
     ref_path = get_reference_path(ego_state, traffic_light_data, observation, map_api, route_roadblock_ids)
-    #print(ref_path.shape)#(2, 1200, 6)
+
     if ref_path is None:
         ref_path = np.zeros((1, 1200, 6), dtype=np.float32)
 
@@ -132,22 +132,20 @@ def get_reference_path(ego_state, traffic_light_data, observation, map_api, rout
                 conn_path = lane_conn.baseline_path.discrete_path
                 conn_path = np.array([[p.x, p.y] for p in conn_path])
                 red_light_lane = transform_to_ego_frame(conn_path, ego_state)
-                #print(red_light_lane.shape)#(129, 2)(132, 2)
                 occupancy = annotate_occupancy(occupancy, ref_path, red_light_lane)
 
-        # Annotate max speed along the reference path
-        target_speed = 13.0 # [m/s]  这里是否需要改成15？
+
+        target_speed = 13.0 # [m/s]  
         target_speed = starting_block.interior_edges[0].speed_limit_mps or target_speed
         target_speed = np.clip(target_speed, min_target_speed, max_target_speed)
         max_speed = annotate_speed(ref_path, target_speed)
 
-        # Finalize reference path
-        ref_path = np.concatenate([ref_path, max_speed, occupancy], axis=-1) # [x, y, theta, k, v_max, occupancy]
+        ref_path = np.concatenate([ref_path, max_speed, occupancy], axis=-1)
 
 
         processed_paths.append(ref_path.astype(np.float32))
 
-    # Stack all processed paths into a single array
+
     if processed_paths == None:
         array_zeros = np.zeros((1, 1200, 6), dtype=np.float32)
         return array_zeros
@@ -335,8 +333,6 @@ def agent_past_process(past_ego_states, past_time_stamps, past_tracked_objects, 
 
 
 def annotate_occupancy(occupancy, ego_path, red_light_lane):
-    #print(ego_path.shape)
-    #print(red_light_lane.shape)
     ego_path_red_light = scipy.spatial.distance.cdist(ego_path[:, :2], red_light_lane)
 
     if len(red_light_lane) < 80:

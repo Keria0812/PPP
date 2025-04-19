@@ -15,7 +15,7 @@ def train_epoch(data_loader, model, optimizer):
     epoch_loss = []
     epoch_metrics = []
     model.train()
-    #print(data_loader)
+    
     with tqdm(data_loader, desc="Training", unit="batch") as data_epoch:
         for batch in data_epoch:
             ego_agent_past = torch.stack([nf for nf in batch['ego_agent_past']]).to(args.device)
@@ -37,8 +37,8 @@ def train_epoch(data_loader, model, optimizer):
             ego_future = torch.stack([nf for nf in batch['ego_agent_future']]).to(args.device)
             neighbors_future = batch['neighbor_agents_future']
             neighbors_future = torch.stack([nf for nf in neighbors_future]).to(args.device)
-            #print(neighbors_future.size())#torch.Size([32, 20, 80, 3])
-            neighbors_future_valid = torch.ne(neighbors_future[..., :2], 0)#标识 neighbors_future 张量中哪些位置的值不等于零。
+            
+            neighbors_future_valid = torch.ne(neighbors_future[..., :2], 0)
 
             # call the mdoel
             optimizer.zero_grad()
@@ -50,7 +50,7 @@ def train_epoch(data_loader, model, optimizer):
             trajectories = decoder_outputs['agents_pred']
             scores = decoder_outputs['scores']
             predictions = trajectories[:, 1:] * neighbors_future_valid[:, :, None, :, 0, None]
-            #print(predictions.size())#torch.Size([32, 20, 6, 80, 3])
+            
             plan = trajectories[:, :1]
             trajectories = torch.cat([plan, predictions], dim=1)
 
@@ -104,7 +104,7 @@ def valid_epoch(data_loader, model):
     with tqdm(data_loader, desc="Validation", unit="batch") as data_epoch:
         for batch in data_epoch:
             # prepare data
-            #print(batch)
+            
             ego_agent_past = torch.stack([nf for nf in batch['ego_agent_past']]).to(args.device)
             neighbor_agents_past = torch.stack([nf for nf in batch['neighbor_agents_past']]).to(args.device)
             route_lanes = torch.stack([nf for nf in batch['route_lanes']]).to(args.device)
@@ -122,9 +122,8 @@ def valid_epoch(data_loader, model):
             ego_future = torch.stack([nf for nf in batch['ego_agent_future']]).to(args.device)
             neighbors_future = batch['neighbor_agents_future']
             neighbors_future = torch.stack([nf for nf in neighbors_future]).to(args.device)
-            neighbors_future_valid = torch.ne(neighbors_future[..., :2], 0)#标识 neighbors_future 张量中哪些位置的值不等于零。
+            neighbors_future_valid = torch.ne(neighbors_future[..., :2], 0)
 
-            # call the mdoel
             with torch.no_grad():
                 decoder_outputs, ego_plan = model(inputs)
                 loss: torch.tensor = 0
@@ -174,7 +173,7 @@ def valid_epoch(data_loader, model):
 
 def collate_fn(batch):
     batch = from_numpy(batch)
-    #print(batch)
+
     
     return_batch = dict()
     # Batching by use a list for non-fixed size
@@ -190,11 +189,11 @@ def from_numpy(data):
             data[key] = from_numpy(data[key])
     if isinstance(data, list) or isinstance(data, tuple):
         data = [from_numpy(x) for x in data]
-        #print(data)
+
     if isinstance(data, np.ndarray):
         """Pytorch now has bool type."""
         data = torch.from_numpy(data).to(args.device)
-        #print(data)
+
     return data
 
 
@@ -219,7 +218,7 @@ def model_training():
 
     # set up optimizer
     optimizer = optim.AdamW(PPP_model.parameters(), lr=args.learning_rate)
-    scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[10], gamma=0.1)
+    scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[20], gamma=0.1)
 
     # training parameters
     train_epochs = args.train_epochs

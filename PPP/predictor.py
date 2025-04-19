@@ -99,9 +99,9 @@ class Decoder(nn.Module):
         encoding_map = encoding[:, self.neighbors+1:, :]
 
         al_interaction = self.cross_attention(encoding_agent,encoding_map,encoding_map, mask=encoder_outputs['map_mask'])
-        #print(al_interaction.size())#torch.Size([32, 21, 256])
+        
         aa_interaction = self.cross_attention(encoding_agent,encoding_agent,encoding_agent, mask=encoder_outputs['actors_mask'])
-        #print(aa_interaction.size())#torch.Size([32, 21, 256])
+        
         interaction = torch.cat([al_interaction,aa_interaction], dim=-1)
         interaction_mlp = self.fusion_mlp(interaction)
         
